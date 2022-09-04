@@ -13,7 +13,7 @@ export async function createCardValidation(req: Request, res: Response, next: Ne
     }
 
     if (!company) {
-        return res.status(404).send("API not found")
+        return res.status(404).send("API não encontrada")
     }
 
     next()
