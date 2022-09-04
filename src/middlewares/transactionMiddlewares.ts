@@ -27,11 +27,21 @@ export async function rechargeCardValidation(req: Request, res: Response, next: 
     next()
 }
 
-export async function paymentValidation(req: Request, res: Response, next: NextFunction) {
+export function paymentValidation(req: Request, res: Response, next: NextFunction) {
     const validation = purchasePaymentSchemas.validate(req.body);
 
     if (validation.error) {
         return res.status(400).send(validation.error.message)
+    }
+
+    next()
+}
+
+export function reportValidation(req: Request, res: Response, next: NextFunction) {
+    const { cardId } = req.params;
+
+    if (!cardId) {
+        return res.status(400).send("Não foi passado o id do cartão")
     }
 
     next()

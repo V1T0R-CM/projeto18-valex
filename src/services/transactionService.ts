@@ -51,6 +51,17 @@ export async function purchase(cardId: number, password: string, businessId: num
         })
 }
 
+export async function generateReport(cardId: number) {
+    const recharges = await cardRecharges(cardId);
+    const payments = await cardPayments(cardId);
+    const balance = await getBalance(cardId);
+
+    return {
+        balance: balance,
+        transactions: payments,
+        recharges: recharges
+    }
+}
 async function getBalance(cardId: number) {
     const recharges = await cardRecharges(cardId);
     const payments = await cardPayments(cardId);
