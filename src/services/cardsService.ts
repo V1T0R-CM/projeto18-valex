@@ -1,4 +1,4 @@
-import { findByTypeAndEmployeeId, TransactionTypes, insert } from "../repositories/cardRepository.js";
+import { findById as findCardById, findByTypeAndEmployeeId, TransactionTypes, insert, update } from "../repositories/cardRepository.js";
 import { findByApiKey } from "../repositories/companyRepository.js";
 import { findById } from "../repositories/employeeRepository.js";
 import { faker } from "@faker-js/faker";
@@ -17,7 +17,7 @@ export async function generateCardInfo(api: string, employeeId: number, cardType
     const cardsOfTheChosenType = await findByTypeAndEmployeeId(cardType, employeeId);
     const cardNumber = faker.finance.creditCardNumber();
     const cardCVV = faker.finance.creditCardCVV();
-    const criptNumberCVV = cryptr.encrypt(cardCVV);
+    const cryptNumberCVV = cryptr.encrypt(cardCVV);
     const cardholderName = generateAbreviatedName(employee.fullName);
     const expirationDate = generateExpirationDate()
 
@@ -30,7 +30,7 @@ export async function generateCardInfo(api: string, employeeId: number, cardType
             employeeId: employeeId,
             number: cardNumber,
             cardholderName: cardholderName,
-            securityCode: criptNumberCVV,
+            securityCode: cryptNumberCVV,
             expirationDate: expirationDate,
             isVirtual: false,
             isBlocked: false,
@@ -55,4 +55,33 @@ function generateAbreviatedName(name: string): string {
 function generateExpirationDate(): string {
     const currentData = dayjs().format("MM/YY");
     return currentData.slice(0, 3) + String(Number(currentData.slice(3)) + 5)
+}
+
+export async function activateCardPassword(cardId: number, cardCVV: string, password: string) {
+    const cardInfo = await findCardById(cardId);
+    const decryptNumberCVV = cryptr.decrypt(cardInfo.securityCode);
+    const cryptPassword = cryptr.encrypt(password);
+    const expired = dateExpired(cardInfo.expirationDate);
+
+    if (!cardInfo) throw { code: "NotFound", message: "Nenhum funcionario cartão cadastrado com esse id" };
+    if (cardInfo.password) throw { code: "Conflict", message: "Cartão já se encontra ativado" };
+    if (expired) throw { code: "Unauthorized", message: "Cartão já se encontra expirado" };
+    if (cardCVV !== decryptNumberCVV) throw { code: "Unauthorized", message: "Codigo de segurança invalido" };
+
+    await update(cardId, { ...cardInfo, password: cryptPassword });
+}
+
+function dateExpired(validThru: string) {
+    const [monthValid, yearValid] = validThru.split("/");
+    const [currentMonth, currentYear] = dayjs().format("MM/YY").split("/");
+
+    if (Number(yearValid) > Number(currentYear)) {
+        return false
+    }
+    else if (Number(yearValid) === Number(currentYear) && Number(monthValid) >= Number(currentMonth)) {
+        return false
+    }
+    else {
+        return true
+    }
 }
