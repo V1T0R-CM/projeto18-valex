@@ -85,3 +85,29 @@ export function dateExpired(validThru: string) {
         return true
     }
 }
+
+export async function block(cardId: number, password: string) {
+    const cardInfo = await findCardById(cardId);
+    const expired = dateExpired(cardInfo.expirationDate);
+
+    if (!cardInfo) throw { code: "NotFound", message: "Nenhum cartão cadastrado com esse id" };
+    if (cardInfo.isBlocked) throw { code: "Unauthorized", message: "Cartão já se encontra bloqueado" };
+    if (!cardInfo.password) throw { code: "Unauthorized", message: "Cartão não esta ativo" };
+    if (password !== cryptr.decrypt(cardInfo.password)) throw { code: "Unauthorized", message: "Senha invalida" };
+    if (expired) throw { code: "Unauthorized", message: "Cartão já se encontra expirado" };
+
+    await update(cardId, { ...cardInfo, isBlocked: true });
+}
+
+export async function unblock(cardId: number, password: string) {
+    const cardInfo = await findCardById(cardId);
+    const expired = dateExpired(cardInfo.expirationDate);
+
+    if (!cardInfo) throw { code: "NotFound", message: "Nenhum cartão cadastrado com esse id" };
+    if (!cardInfo.isBlocked) throw { code: "Unauthorized", message: "Cartão já se encontra desbloqueado" };
+    if (!cardInfo.password) throw { code: "Unauthorized", message: "Cartão não esta ativo" };
+    if (password !== cryptr.decrypt(cardInfo.password)) throw { code: "Unauthorized", message: "Senha invalida" };
+    if (expired) throw { code: "Unauthorized", message: "Cartão já se encontra expirado" };
+
+    await update(cardId, { ...cardInfo, isBlocked: false });
+}
