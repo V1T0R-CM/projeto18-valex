@@ -63,7 +63,7 @@ export async function activateCardPassword(cardId: number, cardCVV: string, pass
     const cryptPassword = cryptr.encrypt(password);
     const expired = dateExpired(cardInfo.expirationDate);
 
-    if (!cardInfo) throw { code: "NotFound", message: "Nenhum funcionario cartão cadastrado com esse id" };
+    if (!cardInfo) throw { code: "NotFound", message: "Nenhum cartão cadastrado com esse id" };
     if (cardInfo.password) throw { code: "Conflict", message: "Cartão já se encontra ativo" };
     if (expired) throw { code: "Unauthorized", message: "Cartão já se encontra expirado" };
     if (cardCVV !== decryptNumberCVV) throw { code: "Unauthorized", message: "Codigo de segurança invalido" };
