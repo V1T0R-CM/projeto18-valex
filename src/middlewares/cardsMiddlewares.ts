@@ -22,6 +22,11 @@ export async function createCardValidation(req: Request, res: Response, next: Ne
 
 export async function activateCardValidation(req: Request, res: Response, next: NextFunction) {
     const validation = activateCardSchemas.validate(req.body);
+    const { cardId } = req.params;
+
+    if (!cardId) {
+        return res.status(400).send("Não foi passado o id do cartão")
+    }
 
     if (validation.error) {
         return res.status(400).send(validation.error.message)

@@ -4,8 +4,8 @@ import { rechargeCard, purchasePayment, report } from "../controllers/transactio
 
 const transactionRouter = Router();
 
-transactionRouter.post("/recharge", rechargeCardValidation, rechargeCard);
-transactionRouter.post("/payment", paymentValidation, purchasePayment);
-transactionRouter.get("/report/:cardId", reportValidation, report)
+transactionRouter.post("/transactions/recharge", rechargeCardValidation, rechargeCard);
+transactionRouter.post("/transactions/payment", paymentValidation, purchasePayment);
+transactionRouter.get("/transactions/report/:cardId", reportValidation, report)
 
 export default transactionRouter;

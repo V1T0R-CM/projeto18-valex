@@ -4,12 +4,13 @@ import { generateCardInfo, activateCardPassword, block, unblock } from "../servi
 export async function createCard(req: Request, res: Response) {
     const { employeeId, cardType } = req.body;
     const apiKey = String(req.headers.x_api_key);
-    await generateCardInfo(apiKey, employeeId, cardType);
-    res.sendStatus(201)
+    const card = await generateCardInfo(apiKey, employeeId, cardType);
+    res.status(201).send(card)
 }
 
 export async function activateCard(req: Request, res: Response) {
-    const { cardId, CVC, password } = req.body;
+    const cardId = Number(req.params.cardId);
+    const { CVC, password } = req.body;
     await activateCardPassword(cardId, CVC, password);
     res.sendStatus(202)
 }

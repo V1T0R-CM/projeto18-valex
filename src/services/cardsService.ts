@@ -37,6 +37,8 @@ export async function generateCardInfo(api: string, employeeId: number, cardType
             type: cardType
         }
     );
+
+    return { number: cardNumber, cardholderName: cardholderName, securityCode: cardCVV, expirationDate: expirationDate, type: cardType }
 }
 
 function generateAbreviatedName(name: string): string {
