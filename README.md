@@ -18,10 +18,10 @@ O Body da requisição deve ser feito no seguinte formato:
 
 ```json
 { "number": "numero_do_cartão", //string
-  cardholderName: "nome_impresso_no_cartão", //string 
-  securityCode: "cvc_do_cartão", //string 
-  expirationDate: "data_expiração_cartão", //string 
-  type: "tipo_do_cartão" // string 
+  "cardholderName": "nome_impresso_no_cartão", //string 
+  "securityCode": "cvc_do_cartão", //string 
+  "expirationDate": "data_expiração_cartão", //string 
+  "type": "tipo_do_cartão" // string 
 }
 ```
 
