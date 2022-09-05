@@ -14,6 +14,16 @@ O Body da requisição deve ser feito no seguinte formato:
   "cardType": "tipo_do_cartão" //string
 }
 ```
+É retornado ao usuário o seguinte objeto:
+
+```json
+{ "number": "numero_do_cartão", //string
+  cardholderName: "nome_impresso_no_cartão", //string 
+  securityCode: "cvc_do_cartão", //string 
+  expirationDate: "data_expiração_cartão", //string 
+  type: "tipo_do_cartão" // string 
+}
+```
 
 ## Rota <span style="color:orange"> **PUT** </span>/card/activate/:cardId
 
